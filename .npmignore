@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 node_modules
 .git
 .github
@@ -7,3 +8,14 @@ node_modules
 tests
 coverage
 *.log
+=======
+apps/
+tests/
+python/
+pyproject.toml
+tsconfig.json
+.git/
+.gitignore
+.github/
+*.ts
+>>>>>>> 88cd2893ccfa01b8ab8ca1eac54ca1905bfb44c6
