@@ -1,0 +1,30 @@
+{
+  "name": "cai-ai",
+  "version": "0.1.1",
+  "description": "CAI - Gemini-powered AI terminal agent",
+  "type": "module",
+  "bin": {
+    "cai": "dist/apps/cli/src/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx apps/cli/src/index.ts",
+    "start": "node dist/apps/cli/src/index.js",
+    "test": "vitest run"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    ".env.example"
+  ],
+  "dependencies": {
+    "@google/genai": "^2.22.0",
+    "chalk": "^6.0.0",
+    "commander": "^15.0.0",
+    "conf": "^15.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "typescript": "^7.0.2"
+  }
+}
