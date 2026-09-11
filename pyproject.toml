@@ -1,0 +1,11 @@
+[project]
+name = "cai-python"
+version = "0.1.0"
+description = "Python-side utilities for CAI (project analysis, specialized dev tools)"
+requires-python = ">=3.10"
+dependencies = [
+    "google-genai>=0.3.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "python"}

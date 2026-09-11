@@ -1,0 +1,9 @@
+apps/
+tests/
+python/
+pyproject.toml
+tsconfig.json
+.git/
+.gitignore
+.github/
+*.ts
