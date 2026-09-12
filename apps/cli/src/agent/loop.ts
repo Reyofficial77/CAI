@@ -24,6 +24,10 @@ export interface AgentLoopDeps {
   onAssistantText?: (text: string) => void;
   onToolCall?: (name: string, args: any) => void;
   onToolResult?: (name: string, success: boolean, output: string, error?: string) => void;
+  /** Called right before each Gemini call (i.e. while we're waiting on a response). */
+  onThinkingStart?: () => void;
+  /** Called as soon as a Gemini response (text or tool calls) comes back. */
+  onThinkingStop?: () => void;
 }
 
 /**
@@ -31,13 +35,19 @@ export interface AgentLoopDeps {
  * user message -> Gemini -> (tool calls -> execute -> feed back)* -> final text.
  */
 export async function runAgentTurn(userMessage: string, deps: AgentLoopDeps): Promise<string> {
-  const { client, ctx, onAssistantText, onToolCall, onToolResult } = deps;
+  const { client, ctx, onAssistantText, onToolCall, onToolResult, onThinkingStart, onThinkingStop } = deps;
   client.pushUserText(userMessage);
 
   let finalText = "";
 
   for (let i = 0; i < MAX_ITERATIONS; i++) {
-    const response = await client.send();
+    onThinkingStart?.();
+    let response;
+    try {
+      response = await client.send();
+    } finally {
+      onThinkingStop?.();
+    }
     const functionCalls = response.functionCalls;
 
     if (response.text) {
