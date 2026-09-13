@@ -1,32 +1,39 @@
 # CAI
 
-<<<<<<< HEAD
 **CAI (Computer AI)** is a Gemini-powered AI terminal assistant designed for coding, game development, learning, work, and general computer-assisted tasks.
 
-CAI works directly inside your project directory and can understand your project, create and edit files, create folders, execute terminal commands, and assist with development workflows.
+CAI works directly inside your project directory. It can understand your project, inspect files, create and edit files, execute terminal commands, inspect Git information, manage development processes, and assist you through multi-step development tasks.
+
+The goal is simple:
+
+> **Install CAI once, then use it anywhere.**
 
 ## Features
 
-* 🤖 Gemini-powered AI assistant
-* 💻 Runs directly inside your terminal
-* 📁 Creates files and folders
-* ✏️ Reads, writes, and edits project files
-* ⚡ Executes terminal commands
-* 🎮 Useful for game development
-* 🧑‍💻 Coding and software development assistance
-* 📚 Learning and explanation mode
-* 💼 Work and productivity assistance
-* 🧠 Project-aware context
-* 📋 Task planning
-* 🔐 Permission controls for potentially dangerous commands
-* 🎨 Claude Code-inspired terminal UI
-* 🌐 Global CLI installation
+* 🤖 **Gemini-powered AI** — Uses the Google Gemini API as its AI engine.
+* 💻 **Terminal-first interface** — Interact with CAI directly from your terminal.
+* 📁 **Project-aware** — Uses the directory where CAI is launched as the project root.
+* ✏️ **File operations** — Read, create, edit, and manage project files.
+* ⚡ **Terminal execution** — Run commands directly through CAI.
+* 🔧 **Development assistance** — Useful for coding, debugging, and project development.
+* 🎮 **Game development** — Designed to assist with game-development workflows.
+* 📚 **Learning** — Ask CAI to explain concepts, code, and projects.
+* 💼 **Work assistance** — Useful for productivity and general computer-assisted tasks.
+* 🌿 **Git awareness** — CAI can inspect Git repository information when needed.
+* 🧠 **Project memory** — Store useful project information in `.cai/memory.json`.
+* 📋 **Project rules** — Define project-specific instructions with `.cai/rules.md`.
+* 🔐 **Permission system** — Control how CAI handles potentially dangerous operations.
+* 🗂️ **Session management** — Switch between previous sessions.
+* ♻️ **Session recovery** — Recover previous session history into a new session.
+* 🌐 **Global CLI** — Install CAI once and use it from any project directory.
 
 ## Requirements
 
-* Node.js 20 or newer
+* Node.js 18 or newer
 * npm
 * A Google Gemini API key
+
+Get your Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey).
 
 ## Installation
 
@@ -36,183 +43,45 @@ Install CAI globally from npm:
 npm install -g cai-ai
 ```
 
-After installation, you can use CAI from any project directory:
-=======
-**CAI (Computer AI)** is a Gemini-powered AI coding and computer assistant that lives in your terminal. It can understand your project, create and edit files, run terminal commands, inspect Git state, manage development processes, teach you concepts, and help with game development, coding, work, and everyday tasks.
-
-The goal is simple: **install CAI once, then use it anywhere.**
-
-```text
-C:\Projects\MyGame> CAI
-
-╭──────────────────────────────────────╮
-│ CAI                                  │
-│ Gemini-powered AI Computer Assistant │
-╰──────────────────────────────────────╯
-
-CAI > Create a simple game project
-```
-
-## Features
-
-- **Global CLI** — install once and run `CAI` from any project folder.
-- **Natural language first** — describe what you want instead of memorizing commands.
-- **Real local file operations** — read, create, edit, move, rename, delete, and search project files.
-- **Terminal execution** — run PowerShell/CMD on Windows and bash/zsh on macOS/Linux.
-- **Gemini function calling** — CAI can decide when it needs to use a local tool and continue the agent loop automatically.
-- **Project-aware** — the current working directory becomes the project root.
-- **Permission system** — SAFE, WARNING, DANGEROUS, and RESTRICTED command classification.
-- **Background processes** — start, inspect, and stop long-running development servers.
-- **Git awareness** — inspect status, diff, log, and branch information.
-- **Project rules** — use `.cai/rules.md` for project-specific instructions.
-- **Project memory** — store durable project notes in `.cai/memory.json` while avoiding secrets and credentials.
-- **Task planning** — multi-step tasks show progress while CAI works.
-- **Learning mode** — ask CAI to teach or guide you instead of doing everything for you.
-- **Codebase analysis** — inspect languages, file counts, line counts, and TODO/FIXME markers.
-- **Doctor command** — check your CAI environment and configuration with `cai doctor`.
-
-## Requirements
-
-- Node.js 18+
-- Python 3.10+ for Python-side utilities
-- A Google Gemini API key
-
-Get a Gemini API key from urlGoogle AI Studiohttps://aistudio.google.com/apikey.
-
-## Installation
-
-### Recommended: Install globally from GitHub
-
-You do **not** need to clone CAI into every project.
+After installation, CAI can be started from any project directory:
 
 ```bash
-npm install -g Reyofficial77/CAI
+cd C:\Projects\MyProject
+cai
 ```
 
-After installation, CAI is available globally:
+You can also use:
 
 ```bash
 CAI
 ```
 
-or:
->>>>>>> 88cd2893ccfa01b8ab8ca1eac54ca1905bfb44c6
-
-```bash
-cai
-```
-
-<<<<<<< HEAD
-CAI automatically uses the directory where you launch it as the project root.
+CAI uses the directory where it was launched as the project root.
 
 For example:
 
-```bash
-cd my-project
-cai
+```text
+C:\Projects\Website> cai
 ```
 
-CAI will work inside `my-project`.
+CAI will work inside:
+
+```text
+C:\Projects\Website
+```
+
+You can use CAI in any project:
+
+```text
+C:\Projects\Website> cai
+C:\Projects\RobloxGame> cai
+C:\Projects\PythonApp> cai
+C:\Projects\NodeAPI> cai
+```
 
 ## Gemini API Key
 
 CAI requires a Google Gemini API key.
-
-Create a `.env` file in your project or configure your environment:
-
-```env
-GEMINI_API_KEY=your_api_key_here
-```
-
-Never commit your API key to GitHub.
-
-You can use `.env.example` as a template.
-
-## Model Configuration
-
-CAI supports configurable Gemini models.
-
-Example:
-
-```bash
-cai config set geminiModel "gemini-3.7-flash"
-```
-
-Check the current configuration:
-
-```bash
-cai config get geminiModel
-```
-
-## CLI
-
-Start CAI:
-
-```bash
-cai
-```
-
-Once CAI is running, simply describe what you want:
-
-```text
-CAI > Create a login page for my project
-```
-
-CAI can inspect the project and determine which files need to be created or modified.
-
-You can also ask it to execute commands:
-
-```text
-CAI > Install the project dependencies and start the development server
-```
-
-## Permission Modes
-
-CAI includes permission controls for terminal operations.
-=======
-### Use CAI in any project
-
-Go to the project you want CAI to work on:
-
-```powershell
-cd C:\Projects\MyGame
-CAI
-```
-
-CAI automatically uses the **current working directory** as its project root.
-
-For example:
-
-```text
-C:\Projects\MyGame> CAI
-```
-
-means CAI works inside:
-
-```text
-C:\Projects\MyGame
-```
-
-You can do the same for any project:
-
-```text
-C:\Projects\Website> CAI
-C:\Projects\RobloxGame> CAI
-C:\Projects\PythonApp> CAI
-C:\Projects\NodeAPI> CAI
-```
-
-### Update CAI
-
-Because CAI is installed from GitHub, update it with:
-
-```bash
-npm install -g Reyofficial77/CAI
-```
-
-## Gemini API setup
-
-CAI reads your API key from the `GEMINI_API_KEY` environment variable. **Never commit your API key to GitHub.**
 
 ### Windows PowerShell
 
@@ -222,13 +91,13 @@ For the current terminal session:
 $env:GEMINI_API_KEY="YOUR_API_KEY"
 ```
 
-To save it permanently for your Windows user:
+To save the API key permanently for your Windows user:
 
 ```powershell
 [Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "YOUR_API_KEY", "User")
 ```
 
-Then open a new PowerShell window.
+After setting the permanent environment variable, open a new PowerShell window.
 
 ### Windows CMD
 
@@ -242,78 +111,247 @@ set GEMINI_API_KEY=YOUR_API_KEY
 export GEMINI_API_KEY="YOUR_API_KEY"
 ```
 
-## Model configuration
+Never commit your Gemini API key to GitHub.
 
-The default Gemini model is:
+Do not commit:
 
-```text
-gemini-3.8-flash
-```
+* `.env`
+* API keys
+* passwords
+* access tokens
+* private keys
+* other credentials
 
-You can override it with:
+## Model Configuration
 
-```powershell
-$env:GEMINI_MODEL="gemini-3.8-flash"
-```
+CAI supports configurable Gemini models.
 
-or:
+Set the Gemini model with:
 
 ```bash
-cai config set geminiModel gemini-3.8-flash
+cai config set geminiModel gemini-3.6-flash
 ```
 
-CAI resolves configuration in this order:
+Check the current model:
+
+```bash
+cai config get geminiModel
+```
+
+The active model is displayed when CAI starts.
+
+Example:
 
 ```text
-Environment variables
-        ↓
-Persisted CAI configuration
-        ↓
-Built-in defaults
+╭──────────────────────────╮
+│ ✳ CAI   gemini-3.6-flash │
+╰──────────────────────────╯
 ```
+
+## CLI Interface
+
+CAI uses a compact terminal interface designed to keep the terminal focused on the current task.
+
+When CAI starts, it displays the CAI name, active Gemini model, project root, permission mode, and current session.
+
+Example:
+
+```text
+╭──────────────────────────╮
+│ ✳ CAI   gemini-3.6-flash │
+╰──────────────────────────╯
+
+  C:\Projects\MyProject   ·   ask-dangerous-only
+
+Session: session-xxxxxxxxxxxx-xxxxx
+Type /help for commands, or just start typing.
+
+╭────────────────────────────────────────────────────────────────────────────╮
+│ ❯                                                                          │
+╰────────────────────────────────────────────────────────────────────────────╯
+  ? for shortcuts
+```
+
+The `❯` prompt is the main input area.
+
+Simply type what you want CAI to do.
+
+Example:
+
+```text
+❯ Create a portfolio website for this project
+```
+
+You do not need to memorize complex commands for normal tasks.
+
+## Shortcuts
+
+Type:
+
+```text
+?
+```
+
+to view available input shortcuts.
+
+CAI also displays:
+
+```text
+? for shortcuts
+```
+
+below the input area.
+
+## Help
+
+Use:
+
+```text
+/help
+```
+
+to view available CAI commands.
+
+## Tool Activity
+
+CAI can use tools when a task requires access to your project or system.
+
+Tool activity is displayed directly in the terminal.
+
+Example:
+
+```text
+→ inspect_project
+✓ inspect_project
+
+→ git_status
+✓ git_status
+```
+
+The arrow indicates that CAI is executing a tool.
+
+The check mark indicates that the tool completed successfully.
+
+This allows you to see what CAI is doing without exposing the model's internal reasoning.
 
 ## Usage
 
-Start CAI from any project:
+Start CAI:
 
 ```bash
-CAI
+cai
 ```
 
-Then simply describe what you want:
+Then describe your task:
 
 ```text
-CAI > Create a Python game called Space Survivor.
-
-CAI > Find and fix the error in my project.
-
-CAI > Create a React landing page.
-
-CAI > Run the development server.
-
-CAI > Explain this code to me.
-
-CAI > Check my Git changes.
-
-CAI > Add a save system to the game.
-
-CAI > exit
+❯ Create a simple portfolio website for my project.
 ```
 
-CAI is designed to operate as an **AI agent**, not just a chatbot. When a task requires files or terminal commands, it can use its tools, receive their results, and continue working toward the requested result.
+CAI can inspect the project and determine which tools are required.
 
-## CLI commands
+### Coding
 
-```bash
-cai doctor       # Check environment and configuration
-cai config       # View or change configuration
-cai init         # Create .cai/rules.md in the current project
-cai processes    # List background processes
+```text
+❯ Create an authentication system with login and registration.
 ```
 
-## Permission modes
+### Debugging
 
-Configure permissions with:
+```text
+❯ Find and fix the error in this project.
+```
+
+### Game Development
+
+```text
+❯ Create a player movement system for this game.
+```
+
+### File Management
+
+```text
+❯ Create a config folder and add a development configuration file.
+```
+
+### Terminal
+
+```text
+❯ Install the dependencies and run the project.
+```
+
+### Learning
+
+```text
+❯ Explain how this project works and teach me what each important file does.
+```
+
+### Git
+
+```text
+❯ Check the current Git status.
+```
+
+## Sessions
+
+CAI supports session history so previous work can be accessed again.
+
+Every CAI session receives a unique session ID.
+
+Example:
+
+```text
+Session: session-1789267606860-h42tvf
+```
+
+### Switch Sessions
+
+Use:
+
+```text
+/session
+```
+
+CAI opens an interactive session picker.
+
+Use:
+
+* `↑` to move up
+* `↓` to move down
+* `Enter` to select a session
+* `Esc` to cancel
+
+Example:
+
+```text
+╭─ Previous Sessions ─────────────────────╮
+│                                         │
+│ ❯ New session                            │
+│   session-xxxxxxxxxxxx-xxxxx             │
+│   session-xxxxxxxxxxxx-xxxxx             │
+│                                         │
+╰─────────────────────────────────────────╯
+
+↑ ↓ select • Enter open • Esc cancel
+```
+
+### Session Recovery
+
+Use:
+
+```text
+/sessionRecovery
+```
+
+Session recovery allows you to recover the history of a previous session into a **new active session**.
+
+This allows you to continue previous work without replacing the original session.
+
+## Permission Modes
+
+CAI includes permission controls for terminal and potentially dangerous operations.
+
+Configure the permission mode with:
 
 ```bash
 cai config set permissionMode <mode>
@@ -321,91 +359,210 @@ cai config set permissionMode <mode>
 
 Available modes:
 
-| Mode | Behavior |
-|---|---|
-| `ask-every-time` | Confirm every non-trivial action |
-| `ask-dangerous-only` | Automatically approve SAFE/WARNING actions and ask before DANGEROUS actions |
-| `trusted` | Automatically approve everything except RESTRICTED actions |
-| `read-only` | Disable file writes and command execution |
->>>>>>> 88cd2893ccfa01b8ab8ca1eac54ca1905bfb44c6
+| Mode                 | Behavior                                                                     |
+| -------------------- | ---------------------------------------------------------------------------- |
+| `ask-every-time`     | Confirm every non-trivial action.                                            |
+| `ask-dangerous-only` | Automatically approve SAFE/WARNING actions and ask before DANGEROUS actions. |
+| `trusted`            | Automatically approve everything except RESTRICTED actions.                  |
+| `read-only`          | Disable file writes and command execution.                                   |
 
-The default mode is:
+The default permission mode is:
 
 ```text
 ask-dangerous-only
 ```
 
-<<<<<<< HEAD
-This allows normal operations while requesting confirmation for potentially dangerous commands.
+`RESTRICTED` operations are always blocked.
+
+The current permission mode is displayed in the CAI header:
+
+```text
+C:\Projects\MyProject   ·   ask-dangerous-only
+```
 
 ## Project Rules
 
-You can add project-specific instructions using:
+CAI supports project-specific instructions.
+
+Initialize project rules with:
+
+```bash
+cai init
+```
+
+This creates:
 
 ```text
-.cai/rules.md
+.cai/
+└── rules.md
 ```
+
+You can put project instructions inside `rules.md`.
 
 Example:
 
-```md
-# Project Rules
-
-- Use TypeScript.
+```text
+- Use TypeScript instead of JavaScript.
 - Keep code readable and compact.
 - Do not create unnecessary files.
 - Follow the existing project structure.
+- Do not modify the database schema.
 ```
 
 CAI can use these rules while working inside the project.
 
 ## Project Memory
 
-CAI can maintain project-aware context so that it can better understand the structure and purpose of an existing project.
-
-This allows CAI to work more naturally on multi-step development tasks.
-
-## Example Tasks
-
-### Coding
+CAI can maintain lightweight project memory:
 
 ```text
-CAI > Create an authentication system with login and registration.
+.cai/
+└── memory.json
 ```
 
-### Debugging
+Project memory is intended for durable project information that can help CAI understand the project across sessions.
+
+Do not store secrets inside project memory.
+
+Never store:
+
+* API keys
+* passwords
+* access tokens
+* private keys
+* credentials
+
+## Agent Workflow
+
+CAI is designed to work as an AI agent rather than only a chatbot.
+
+A typical task follows this process:
 
 ```text
-CAI > Find and fix the error in this project.
+User
+  ↓
+CAI CLI
+  ↓
+Gemini
+  ↓
+Tool request
+  ↓
+CAI tool execution
+  ↓
+Tool result
+  ↓
+Gemini
+  ↓
+Continue task
 ```
 
-### Game Development
+For example, if you ask:
 
 ```text
-CAI > Create the player movement system for this game.
+❯ Create a website and run it on port 3000.
 ```
 
-### File Management
+CAI may inspect the project, create or modify files, install dependencies, execute commands, and continue working based on the results.
+
+Tool activity is displayed while CAI works:
 
 ```text
-CAI > Create a new config folder and add a development configuration file.
+→ inspect_project
+✓ inspect_project
+
+→ write_file
+✓ write_file
+
+→ run_command
+✓ run_command
 ```
 
-### Terminal
+## CLI Commands
+
+Commands available from the terminal include:
+
+```bash
+cai doctor
+cai config
+cai init
+cai processes
+```
+
+### Doctor
+
+Check the CAI environment and configuration:
+
+```bash
+cai doctor
+```
+
+### Config
+
+View or change CAI configuration:
+
+```bash
+cai config
+```
+
+Example:
+
+```bash
+cai config set geminiModel gemini-3.6-flash
+```
+
+### Init
+
+Create project-specific CAI rules:
+
+```bash
+cai init
+```
+
+### Processes
+
+List background processes managed by CAI:
+
+```bash
+cai processes
+```
+
+### Interactive Commands
+
+Inside a CAI session:
 
 ```text
-CAI > Install the dependencies and run the project.
+/help
+/session
+/sessionRecovery
+exit
+quit
 ```
 
-### Learning
+## Exiting CAI
+
+To leave CAI, type:
 
 ```text
-CAI > Explain how this project works and teach me what each important file does.
+exit
 ```
+
+or:
+
+```text
+quit
+```
+
+You can also use:
+
+```text
+Ctrl+C
+```
+
+to cancel the current action.
 
 ## Development
 
-Clone the repository:
+If you want to develop CAI itself, clone the repository:
 
 ```bash
 git clone https://github.com/Reyofficial77/CAI.git
@@ -418,7 +575,7 @@ Install dependencies:
 npm install
 ```
 
-Build the project:
+Build the TypeScript project:
 
 ```bash
 npm run build
@@ -436,236 +593,110 @@ Run the compiled version:
 npm start
 ```
 
-## Publishing
+## Local Global CLI Testing
 
-CAI is distributed through npm.
-
-To create a package locally:
+When developing CAI, build the project first:
 
 ```bash
-npm pack
+npm run build
 ```
 
-To publish a new version:
+Then install the local project globally:
 
 ```bash
-npm version patch
-npm publish --access public
+npm install -g .
+```
+
+You can then test CAI from another directory:
+
+```powershell
+cd C:\Projects\TestProject
+cai
 ```
 
 ## Project Structure
-=======
-`RESTRICTED` operations are always blocked.
-
-## Project rules
-
-Initialize project-specific instructions:
-
-```bash
-cai init
-```
-
-This creates:
-
-```text
-.cai/
-└── rules.md
-```
-
-You can put instructions such as:
-
-```text
-- Use TypeScript instead of JavaScript.
-- Use 2 spaces for indentation.
-- Do not modify the database schema.
-- Keep the code simple.
-```
-
-CAI reads these rules when working in that project.
-
-## Project memory
-
-CAI can maintain lightweight project memory:
-
-```text
-.cai/
-└── memory.json
-```
-
-This allows useful project information to persist between CAI sessions. Secrets and credentials should never be stored there.
-
-## Architecture
-
-```text
-                  ┌──────────────────┐
-                  │      User        │
-                  └────────┬─────────┘
-                           │
-                           ▼
-                  ┌──────────────────┐
-                  │     CAI CLI      │
-                  └────────┬─────────┘
-                           │
-                           ▼
-                  ┌──────────────────┐
-                  │    Gemini API    │
-                  └────────┬─────────┘
-                           │
-                    Tool requests
-                           │
-                           ▼
-              ┌────────────────────────┐
-              │      CAI Tool Layer    │
-              ├────────────────────────┤
-              │ Filesystem              │
-              │ Terminal                │
-              │ Git                     │
-              │ Processes               │
-              │ Project analysis        │
-              └────────────┬───────────┘
-                           │
-                           ▼
-                  ┌──────────────────┐
-                  │  Current Project │
-                  └──────────────────┘
-```
-
-### Source structure
->>>>>>> 88cd2893ccfa01b8ab8ca1eac54ca1905bfb44c6
 
 ```text
 CAI/
 ├── apps/
 │   └── cli/
 │       └── src/
-<<<<<<< HEAD
-│           ├── agent/
-│           ├── tools/
-│           ├── ui/
-│           └── index.ts
-├── dist/
+│           ├── agent/        # Agent loop and session handling
+│           ├── gemini/       # Gemini client
+│           ├── tools/        # Filesystem, terminal, Git, and process tools
+│           ├── config/       # Configuration
+│           ├── ui/           # Terminal UI
+│           └── types/        # Type definitions
+├── python/                   # Python-side utilities
+├── tests/
 ├── .env.example
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
-## Security
+## Publishing
 
-CAI can execute commands on your computer. Review commands carefully when CAI asks for permission, especially commands that can modify or delete files, install software, or change system configuration.
+CAI is distributed through npm.
 
-Never expose your Gemini API key.
-
-Do not commit `.env` files containing secrets.
-=======
-│           ├── agent/       # Agent loop and session handling
-│           ├── gemini/      # Gemini client
-│           ├── tools/       # Filesystem, terminal, Git, process tools
-│           ├── config/      # Configuration
-│           ├── ui/          # Terminal UI
-│           └── types/
-├── python/                  # Python-side utilities
-├── tests/
-├── .env.example
-├── package.json
-└── README.md
-```
-
-## Development
-
-If you are developing CAI itself instead of installing it globally:
+Create a package locally:
 
 ```bash
-git clone https://github.com/Reyofficial77/CAI.git
-cd CAI
-npm install
-npm run build
-npm start
+npm pack
 ```
 
-For development mode:
+Update the package version:
 
 ```bash
-npm run dev
+npm version patch
 ```
 
-## Global CLI development workflow
-
-When developing the CAI CLI locally, build the project first:
+Publish the package:
 
 ```bash
-npm run build
-```
-
-Then you can test the generated CLI directly or install the repository globally.
-
-After making changes:
-
-```bash
-npm run build
-npm install -g .
-```
-
-Then from another folder:
-
-```powershell
-cd C:\Projects\TestProject
-CAI
+npm publish --access public
 ```
 
 ## Security
 
-CAI can execute commands on your machine. Always review permission settings and understand what a requested action will do.
+CAI can execute commands on your computer.
 
-Recommended default:
+Always review permission settings and understand what an action will do, especially when a command can:
 
-```text
-ask-dangerous-only
-```
+* Modify files
+* Delete files
+* Install software
+* Change system configuration
+* Execute external programs
+* Modify project data
 
-Never publish:
+Never publish or commit:
 
-- `GEMINI_API_KEY`
-- passwords
-- access tokens
-- private keys
-- `.env` files containing secrets
-- other credentials
->>>>>>> 88cd2893ccfa01b8ab8ca1eac54ca1905bfb44c6
+* `GEMINI_API_KEY`
+* Passwords
+* Access tokens
+* Private keys
+* `.env` files containing secrets
+* Other credentials
 
 ## Roadmap
 
 Planned improvements include:
 
-<<<<<<< HEAD
 * Better agent planning
-* More powerful project context
+* Faster agent execution
+* Streaming Gemini responses
 * Improved file editing
-* More tools
-* Better command execution controls
-* Improved error recovery
+* Interactive file diffs
+* More granular tool permissions
+* Better error recovery
 * Additional Gemini model support
-* More development workflows
+* More development tools
+* More game-development tools
 * Better terminal UI
 * Cross-platform improvements
-
-## License
-
-This project is currently under active development.
-
----
-
-**CAI — Your AI assistant in the terminal.**
-=======
-- Streaming Gemini responses
-- Better Claude Code-style terminal UI
-- Interactive file diffs before applying changes
-- More granular tool permissions
-- `/help`, `/clear`, `/model`, and `/status` commands
-- Session/history management
-- Automatic CAI updates
-- Better multi-agent workflows
-- More development and game-development tools
+* Automatic CAI updates
+* Better multi-agent workflows
 
 ## License
 
@@ -673,5 +704,4 @@ See the repository license for the current project terms.
 
 ---
 
-**CAI — one installation, every project.**
->>>>>>> 88cd2893ccfa01b8ab8ca1eac54ca1905bfb44c6
+**CAI — Your AI assistant in the terminal.**

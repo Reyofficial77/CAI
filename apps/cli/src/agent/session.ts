@@ -1,24 +1,30 @@
+import fs from "node:fs/promises";
 import readline from "node:readline";
 import chalk from "chalk";
 import { GeminiClient } from "../gemini/client.js";
 import { runAgentTurn, BASE_SYSTEM_INSTRUCTION } from "./loop.js";
-import { getConfig } from "../config/index.js";
+import { getConfig, setConfigValue, getConfigPath } from "../config/index.js";
 import { loadProjectRules } from "./rules.js";
 import { activeTaskPlan } from "./taskPlanState.js";
+import { resolveSafePath, PathSecurityError } from "../tools/filesystem/paths.js";
 import {
   printGreeting,
   printSessionLine,
-  printAssistant,
   printToolCall,
   printToolResult,
   printError,
+  printWarning,
+  printHelp,
+  printGoodbye,
   makeConfirmer,
-  readBoxedInput,
+  readPrompt,
   Spinner,
   RegionRenderer,
 } from "../ui/render.js";
 import { createSession, listSessions, loadSession, saveSession, updateSessionTitle, type SavedSession } from "./sessionStore.js";
 import type { ExecutionContext } from "../types/index.js";
+
+const MAX_FILE_REF_BYTES = 50_000;
 
 async function pickSession(projectRoot: string, recovery = false): Promise<SavedSession | null> {
   const sessions = await listSessions(projectRoot);
@@ -72,14 +78,66 @@ function makeSessionTitle(input: string) {
   return clean.length > 60 ? `${clean.slice(0, 57)}...` : clean || "CAI session";
 }
 
+/**
+ * Expands any `@path/to/file` references in the user's message into inline
+ * file-content context sent to Gemini, e.g. `@src/App.tsx fix the bug`.
+ * Returns the augmented message to send, plus any warnings to show the user.
+ */
+async function expandFileReferences(input: string, projectRoot: string): Promise<{ augmented: string; warnings: string[] }> {
+  const matches = [...input.matchAll(/@([^\s]+)/g)];
+  if (!matches.length) return { augmented: input, warnings: [] };
+
+  const warnings: string[] = [];
+  const attachments: string[] = [];
+
+  for (const match of matches) {
+    const ref = match[1];
+    try {
+      const safe = resolveSafePath(projectRoot, ref);
+      const stat = await fs.stat(safe);
+      if (!stat.isFile()) { warnings.push(`@${ref} is not a file — skipped.`); continue; }
+      if (stat.size > MAX_FILE_REF_BYTES) { warnings.push(`@${ref} is too large (${stat.size} bytes) to inline — skipped.`); continue; }
+      const content = await fs.readFile(safe, "utf-8");
+      attachments.push(`Referenced file @${ref}:\n\`\`\`\n${content}\n\`\`\``);
+    } catch (err) {
+      if (err instanceof PathSecurityError) warnings.push(`@${ref} is outside the project root — skipped.`);
+      else warnings.push(`@${ref} not found — skipped.`);
+    }
+  }
+
+  if (!attachments.length) return { augmented: input, warnings };
+  return { augmented: `${attachments.join("\n\n")}\n\n${input}`, warnings };
+}
+
+function printStatus(config: ReturnType<typeof getConfig>, projectRoot: string, session: SavedSession) {
+  console.log();
+  console.log(`  ${chalk.dim("Model")}       ${config.geminiModel}`);
+  console.log(`  ${chalk.dim("Permission")}  ${config.permissionMode}`);
+  console.log(`  ${chalk.dim("Root")}        ${projectRoot}`);
+  console.log(`  ${chalk.dim("Session")}     ${session.id}`);
+  console.log();
+}
+
+async function runDoctor(config: ReturnType<typeof getConfig>, projectRoot: string) {
+  console.log();
+  const check = (ok: boolean, label: string) => console.log(`  ${ok ? chalk.green("✓") : chalk.red("✗")} ${label}`);
+  check(!!config.geminiApiKey, "GEMINI_API_KEY is set");
+  check(!!config.geminiModel, `Model configured (${config.geminiModel})`);
+  try { await fs.access(projectRoot); check(true, `Project root is accessible (${projectRoot})`); }
+  catch { check(false, `Project root is accessible (${projectRoot})`); }
+  check(process.stdout.isTTY === true, "Running in an interactive terminal");
+  console.log(`  ${chalk.dim("Config file")}  ${getConfigPath()}`);
+  console.log();
+}
+
 export async function startInteractiveSession() {
   const config = getConfig();
+  const projectRoot = config.workingDirectory ?? process.cwd();
   if (!config.geminiApiKey) {
-    printGreeting(config, config.workingDirectory ?? process.cwd());
+    printGreeting(config, projectRoot);
     printError("GEMINI_API_KEY is not set. Export it in your shell or run `cai config set geminiApiKey <key>`.");
     return;
   }
-  const projectRoot = config.workingDirectory ?? process.cwd();
   const ctx: ExecutionContext = { projectRoot, cwd: projectRoot, permissionMode: config.permissionMode, confirm: makeConfirmer(config.permissionMode), log: (line) => console.log(chalk.dim(line)) };
   const rules = await loadProjectRules(projectRoot);
   const systemInstruction = rules ? `${BASE_SYSTEM_INSTRUCTION}\n\nProject-specific rules (from .cai/rules.md — follow these):\n${rules}` : BASE_SYSTEM_INSTRUCTION;
@@ -88,19 +146,47 @@ export async function startInteractiveSession() {
   let session = await createSession(projectRoot);
 
   printGreeting(config, projectRoot);
-  printSessionLine(session.title, session.id);
+  printSessionLine(session.id);
+  console.log(chalk.dim("Type /help for commands, or just start typing."));
   console.log();
 
   const spinner = new Spinner("Thinking");
 
   while (true) {
-    const input = (await readBoxedInput()).trim();
-    if (!input) continue;
-    if (input === "exit" || input === "quit") break;
-    if (input === "/session" || input === "/sessionRecovery") {
-      const selected = await pickSession(projectRoot, input === "/sessionRecovery");
+    const raw = (await readPrompt()).trim();
+    if (!raw) continue;
+
+    // ── slash commands ──────────────────────────────────────────────────
+    if (raw === "exit" || raw === "quit" || raw === "/exit") { break; }
+    if (raw === "/help") { printHelp(); continue; }
+    if (raw === "/status") { printStatus(config, projectRoot, session); continue; }
+    if (raw === "/doctor") { await runDoctor(config, projectRoot); continue; }
+    if (raw === "/clear") {
+      client.resetHistory();
+      session = await createSession(projectRoot);
+      console.log(chalk.dim(`Conversation cleared. New session: ${session.id}`));
+      console.log();
+      continue;
+    }
+    if (raw === "/model" || raw.startsWith("/model ")) {
+      const name = raw.slice("/model".length).trim();
+      if (!name) { console.log(chalk.dim(`Current model: ${config.geminiModel}`)); console.log(); continue; }
+      setConfigValue("geminiModel", name);
+      config.geminiModel = name;
+      try {
+        client = new GeminiClient({ apiKey: config.geminiApiKey!, model: name }, systemInstruction);
+        client.loadHistory(session.history);
+        console.log(chalk.green(`Switched model to ${name}`));
+      } catch (err: any) {
+        printError(err.message);
+      }
+      console.log();
+      continue;
+    }
+    if (raw === "/session" || raw === "/sessionRecovery") {
+      const selected = await pickSession(projectRoot, raw === "/sessionRecovery");
       if (!selected) { console.log(chalk.dim("Session selection cancelled.")); continue; }
-      if (input === "/sessionRecovery") {
+      if (raw === "/sessionRecovery") {
         session = await createSession(projectRoot, `Recovery: ${selected.title}`);
         client.loadHistory(selected.history);
         session.history = client.getHistory();
@@ -114,16 +200,33 @@ export async function startInteractiveSession() {
       console.log();
       continue;
     }
+
+    // ── normal turn ──────────────────────────────────────────────────────
     try {
-      if (session.title === "New session") await updateSessionTitle(session, makeSessionTitle(input));
+      if (session.title === "New session") await updateSessionTitle(session, makeSessionTitle(raw));
+
+      const { augmented, warnings } = await expandFileReferences(raw, projectRoot);
+      for (const w of warnings) printWarning(w);
+
       let lastPlanRender = "";
-      await runAgentTurn(input, {
+      let wroteChunk = false;
+      let usedTools = false;
+
+      const finalText = await runAgentTurn(augmented, {
         client,
         ctx,
         onThinkingStart: () => spinner.start(),
         onThinkingStop: () => spinner.stop(),
-        onAssistantText: printAssistant,
-        onToolCall: (name, args) => printToolCall(name, args),
+        onAssistantTextChunk: (delta) => {
+          if (!wroteChunk) console.log();
+          wroteChunk = true;
+          process.stdout.write(chalk.white(delta));
+        },
+        onToolCall: (name, args) => {
+          if (wroteChunk) { console.log(); console.log(); wroteChunk = false; }
+          usedTools = true;
+          printToolCall(name, args);
+        },
         onToolResult: (name, success, output, error) => {
           printToolResult(name, success, output, error);
           if (name === "set_task_plan" || name === "update_task_step") {
@@ -132,6 +235,10 @@ export async function startInteractiveSession() {
           }
         },
       });
+
+      if (wroteChunk) console.log();
+      if (usedTools && !finalText.trim()) console.log(chalk.green("✓ Task completed"));
+
       session.history = client.getHistory();
       await saveSession(session);
     } catch (err: any) {
@@ -140,6 +247,8 @@ export async function startInteractiveSession() {
     }
     console.log();
   }
+
   session.history = client.getHistory();
   await saveSession(session);
+  printGoodbye();
 }

@@ -59,4 +59,45 @@ export class GeminiClient {
     const functionCalls = parts.filter((part): part is typeof part & { functionCall: FunctionCall } => !!part.functionCall).map((part) => part.functionCall);
     return { text, functionCalls };
   }
+
+  /**
+   * Same as send(), but calls `onTextChunk` with each incremental text delta
+   * as it streams in from the API, instead of waiting for the full response.
+   * Function calls still only become available once complete (the SDK does
+   * not stream partial tool-call arguments), so they're returned at the end
+   * exactly like send().
+   *
+   * IMPORTANT: parts are pushed to history exactly as the API returned them,
+   * unmodified. Gemini attaches an opaque `thoughtSignature` to function-call
+   * parts that must be echoed back verbatim on the next turn — reconstructing
+   * a part from just `{ functionCall }` drops that field and the next request
+   * fails with "Function call is missing a thought_signature".
+   */
+  async sendStream(onTextChunk: (delta: string) => void): Promise<GeminiResponse> {
+    const stream = await this.ai.models.generateContentStream({
+      model: this.model,
+      contents: this.history,
+      config: { systemInstruction: this.systemInstruction, tools: [{ functionDeclarations: buildFunctionDeclarations(getAllTools()) }] },
+    });
+
+    let fullText = "";
+    const functionCalls: FunctionCall[] = [];
+    const collectedParts: NonNullable<Content["parts"]> = [];
+
+    for await (const chunk of stream) {
+      const parts = chunk.candidates?.[0]?.content?.parts ?? [];
+      for (const part of parts) {
+        collectedParts.push(part); // keep verbatim — preserves thoughtSignature and any other fields
+        if (typeof part.text === "string" && part.text) {
+          fullText += part.text;
+          onTextChunk(part.text);
+        }
+        if (part.functionCall) functionCalls.push(part.functionCall);
+      }
+    }
+
+    if (collectedParts.length) this.history.push({ role: "model", parts: collectedParts });
+
+    return { text: fullText, functionCalls };
+  }
 }
